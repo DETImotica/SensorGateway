@@ -17,10 +17,14 @@ docker pull eclipse-mosquitto
 ```
 mkdir -p /var/mosquitto/logs
 mkdir -p /var/mosquitto/data
-chmod ugw+w /var/mosquitto
+chmod ugo+w /var/mosquitto
 ```
 
 4. Create the configuration and passwd files
+```
+wget https://raw.githubusercontent.com/DETImotica/Sensor_Gateway/master/configuration/var/mosquitto/mosquitto.conf -P /var/mosquitto
+wget https://raw.githubusercontent.com/DETImotica/Sensor_Gateway/master/configuration/var/mosquitto/data/passwd -P /var/mosquitto/data
+```
 
 5. Start a docker container in daemon mode
 ```

@@ -8,14 +8,14 @@ Code and Config files for a Raspberry Pi MQTT bridge
 sudo apt install docker
 ```
 
-2. Pull the eclipse-mosquitto image
+2. Pull the *eclipse-mosquitto* image
 ```
 docker pull eclipse-mosquitto
 ```
 
 3. Create the necessary directories
 ```
-mkdir -p /var/mosquitto/logs
+mkdir -p /var/mosquitto/log
 mkdir -p /var/mosquitto/data
 chmod ugo+w /var/mosquitto
 ```
@@ -28,10 +28,10 @@ wget https://raw.githubusercontent.com/DETImotica/Sensor_Gateway/master/configur
 
 5. Start a docker container in daemon mode
 ```
-docker run -d -it -p 1883:1883 -p 9001:9001 -v /root/mosquitto.conf:/mosquitto/config/mosquitto.conf -v /var/mosquitto/data:/mosquitto/data -v /var/mosquitto/log:/mosquitto/log eclipse-mosquitto
+docker run -d -it -p 1883:1883 -p 9001:9001 -v /var/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf -v /var/mosquitto/data:/mosquitto/data -v /var/mosquitto/log:/mosquitto/log eclipse-mosquitto
 ```
 
-6. (Optional) Install mosquitto-clients package to be able to subscribe and publish to topics via the CLI
+6. (Optional) Install *mosquitto-clients* package to be able to subscribe and publish to topics via the CLI
 ```
 sudo apt install mosquitto-clients
 ```

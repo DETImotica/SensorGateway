@@ -1,0 +1,19 @@
+{
+    "remote": {
+        "host": "iot.av.it.pt",
+        "port": 1883,
+        "tenant_id": "detimotic",
+        "device_prefix": "device_",
+        "telemetry_topic": "telemetry",
+        "events_topic": "events",
+        "value_description": "value"
+    },
+    "local": {
+        "host": "localhost",
+        "port": 1883,
+        "uname": "detimotic",
+        "telemetry_topic": "telemetry",
+        "events_topic": "events",
+        "value_description": "value"
+    }
+}

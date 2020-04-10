@@ -5,26 +5,22 @@ import signal
 import logging
 import argparse
 import json
+import random
 import paho.mqtt.client as mqtt
 
 # Global vars
 config = None
 remotes = {}
 
-# used to stop the infinite loop
-done = False
-
 # configure logger output format
 logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',datefmt='%m-%d %H:%M:%S')
 # get a logger to write
 logger = logging.getLogger('gateway')
 
-
-def exit(signalNumber, frame):
-    global done
-    done = True
-    return
-
+def on_disconnect(client, ud, rc):
+    if rc != 0:
+        logger.info('DISCONNECT')
+        client.reconnect()
 
 def on_local_message(client, userdata, message):
     msg = message.payload.decode("utf-8")
@@ -43,12 +39,14 @@ def remote_publish(dev_id, value, event=False):
     remote = None
 
     # MQTT client - remote
-    if dev_id not in remotes:
-        remote = mqtt.Client('', protocol=mqtt.MQTTv311)
+    if (dev_id not in remotes) or (not remotes[dev_id].is_connected()):
+        remote = mqtt.Client(dev_id + '_' + str(random.randint(0, 5000)), protocol=mqtt.MQTTv311)
         remote.username_pw_set(config['remote']['device_prefix']+dev_id+'@'+config['remote']['tenant_id'], password=args.p)
         remote.enable_logger()
         remote.connect(config['remote']['host'], port=config['remote']['port'])
+        remote.on_disconnect = on_disconnect
         remotes[dev_id] = remote
+        remote.loop_start()
     else:
         remote = remotes[dev_id]
 
@@ -57,13 +55,8 @@ def remote_publish(dev_id, value, event=False):
     remote.publish(config['remote']['events_topic' if event else 'telemetry_topic'], msg, qos=0)
 
 
-
 def main(args):
     global config
-
-    # register handler for interruption
-    # it stops the infinite loop gracefully
-    signal.signal(signal.SIGINT, exit)
 
     with open('gateway_config.json') as json_file:
         config = json.load(json_file)
@@ -79,10 +72,7 @@ def main(args):
     local.connect(config['local']['host'], port=config['local']['port'])
     local.subscribe(config['local']['telemetry_topic'] + '/#', qos=0)
     local.subscribe(config['local']['events_topic'] + '/#', qos=0)
-    local.loop_start()
-
-    while not done:
-        pass
+    local.loop_forever()
 
     local.unsubscribe(config['local']['telemetry_topic'] + '/#')
     local.unsubscribe(config['local']['events_topic'] + '/#')

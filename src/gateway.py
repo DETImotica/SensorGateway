@@ -17,11 +17,6 @@ logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(name)-12s %(leveln
 # get a logger to write
 logger = logging.getLogger('gateway')
 
-def on_disconnect(client, ud, rc):
-    if rc != 0:
-        logger.info('DISCONNECT')
-        client.reconnect()
-
 def on_local_message(client, userdata, message):
     msg = message.payload.decode("utf-8")
     logger.info('[local] Received message %s on topic %s', msg, message.topic)
@@ -40,11 +35,12 @@ def remote_publish(dev_id, value, event=False):
 
     # MQTT client - remote
     if (dev_id not in remotes) or (not remotes[dev_id].is_connected()):
+        if dev_id in remotes:
+            remotes[dev_id].loop_stop()
         remote = mqtt.Client(dev_id + '_' + str(random.randint(0, 5000)), protocol=mqtt.MQTTv311)
         remote.username_pw_set(config['remote']['device_prefix']+dev_id+'@'+config['remote']['tenant_id'], password=args.p)
         remote.enable_logger()
         remote.connect(config['remote']['host'], port=config['remote']['port'])
-        remote.on_disconnect = on_disconnect
         remotes[dev_id] = remote
         remote.loop_start()
     else:

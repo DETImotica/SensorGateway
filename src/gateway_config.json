@@ -15,5 +15,8 @@
         "telemetry_topic": "telemetry",
         "events_topic": "events",
         "value_description": "value"
+    },
+    "security": {
+        "kdf_iterations": 1000
     }
 }

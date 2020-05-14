@@ -5,7 +5,6 @@
         "tenant_id": "detimotic",
         "device_prefix": "device_",
         "telemetry_topic": "telemetry",
-        "events_topic": "events",
         "value_description": "value"
     },
     "local": {
@@ -13,8 +12,8 @@
         "port": 1883,
         "uname": "detimotic",
         "telemetry_topic": "telemetry",
-        "events_topic": "events",
-        "value_description": "value"
+        "value_description": "value",
+        "max_workers": 20
     },
     "security": {
         "kdf_iterations": 1000

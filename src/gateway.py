@@ -68,10 +68,13 @@ def remote_publish(dev_id, value):
 
 def remotes_loop():
     while True:
-        r = remotes.copy()
-        for remote in r:
-            r[remote].loop()
-        time.sleep(1)
+        try:
+            r = remotes.copy()
+            for remote in r:
+                r[remote].loop()
+            time.sleep(1)
+        except:
+            logger.info("Exception in loop thread")
 
 
 def main():
